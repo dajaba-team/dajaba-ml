@@ -1,0 +1,17 @@
+name: ML sync scope and convention
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tools/ml_sync -p 'test_*.py' -v
+      - run: python tools/ml_sync/check_pr.py

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "repository": "dajaba-team/dajaba-ml",
+  "base_branch": "develop",
+  "jira_base": "https://dajaba.atlassian.net",
+  "jira_project": "SCRUM",
+  "jira_account_id": "712020:3f88ab19-c990-485b-9f68-0cc5079f4735",
+  "github_login": "yeomjunyoung0318",
+  "spreadsheet_id": "1ixWfhx8LldEE01EbN-13jftxnaIy71rfbyCL2tEntTg",
+  "sheet_id": 1877998031,
+  "sheet_name": "WBS",
+  "wbs_owner": "준영",
+  "schedule": null,
+  "automation_issue": "SCRUM-38",
+  "items": [
+    {"wbs_id": "1.4", "jira_key": "SCRUM-33", "marker": "dajaba-ml-wbs-1-4", "depends_on": []},
+    {"wbs_id": "2.6", "jira_key": "SCRUM-34", "marker": "dajaba-ml-wbs-2-6", "depends_on": []},
+    {"wbs_id": "2.13", "jira_key": "SCRUM-35", "marker": "dajaba-ml-wbs-2-13", "depends_on": ["SCRUM-34"]},
+    {"wbs_id": "2.21", "jira_key": "SCRUM-36", "marker": "dajaba-ml-wbs-2-21", "depends_on": ["SCRUM-35"]},
+    {"wbs_id": "3.6", "jira_key": "SCRUM-37", "marker": "dajaba-ml-wbs-3-6", "depends_on": ["SCRUM-35", "SCRUM-36"]}
+  ]
+}
