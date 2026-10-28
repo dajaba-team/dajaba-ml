@@ -1,0 +1,38 @@
+name: ML WBS Jira sync (manual)
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Apply scoped due-date and managed-note changes after live planning
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: dajaba-ml-wbs-jira-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    env:
+      JIRA_EMAIL: ${{ secrets.ML_SYNC_JIRA_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.ML_SYNC_JIRA_API_TOKEN }}
+      GOOGLE_ACCESS_TOKEN: ${{ secrets.ML_SYNC_GOOGLE_ACCESS_TOKEN }}
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/ml_sync/sync.py plan --plan sync-plan.json
+      - if: inputs.apply
+        run: python tools/ml_sync/sync.py apply --plan sync-plan.json --journal sync-journal.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ml-sync-run
+          path: |
+            sync-plan.json
+            sync-journal.json
+          retention-days: 7
