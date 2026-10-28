@@ -1,0 +1,5 @@
+__pycache__/
+*.py[cod]
+sync-plan.json
+sync-journal.json*
+.env*
