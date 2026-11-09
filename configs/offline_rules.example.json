@@ -1,0 +1,81 @@
+{
+  "version": "multi-rule-offline-execution-v1",
+  "assembly_index": "assembly.local.json",
+  "memory_limit": "4GB",
+  "threads": 2,
+  "policy": {
+    "semantics_version": "rules-v1-20261108-pr75-49166e10",
+    "spec_url": "https://github.com/dajaba-team/dajaba-backend/blob/49166e10e1281b06c22b44379575894b20b1e491/docs/06_features/rules.md",
+    "enabled_rules": [
+      "R01",
+      "R02",
+      "R04",
+      "R06",
+      "R07"
+    ],
+    "excluded_rules": {
+      "R05": "UNDER_REVIEW",
+      "R03": "NOT_REQUESTED",
+      "R08": "NOT_REQUESTED"
+    },
+    "rule_versions": {
+      "R01": "mldb-offline-r01-v1",
+      "R02": "mldb-offline-r02-v2-n5",
+      "R04": "mldb-offline-r04-v1",
+      "R07": "mldb-offline-r07-v1",
+      "R06": "mldb-offline-r06-v1"
+    },
+    "rule_version_origin": "OFFLINE_SPEC_NOT_BACKEND_DEPLOYMENT",
+    "rules": {
+      "R01": {
+        "min_distinct_receivers": 5
+      },
+      "R02": {
+        "min_distinct_senders": 5
+      },
+      "R04": {
+        "max_hops": 3,
+        "window_hours": 72
+      },
+      "R07": {
+        "criteria_by_currency": [
+          {
+            "currency": "US Dollar",
+            "basis_amount": 10000,
+            "lower_bound_ratio": 0.8,
+            "min_count": 3
+          }
+        ]
+      },
+      "R06": {
+        "min_distinct_senders": 3,
+        "min_distinct_receivers": 3
+      }
+    },
+    "eligibility_policy": {
+      "version": "evidence-disjoint-temporal-v2",
+      "boundary_policy": "FIXED_EXISTING_T1_T2",
+      "history_policy": "ALL_OBSERVED_TS_LT_REFERENCE_TS",
+      "selection": "Train reserves full evidence; validation excludes full candidates sharing any train evidence; test excludes full candidates sharing train or time-eligible validation evidence. Independent of labels and target completeness.",
+      "audit_policy": "ALL_CANDIDATES_FULL_EVIDENCE_FULL_PATHS_PRESERVED",
+      "limitations": "Evidence-disjoint does not establish account/graph-level independence. Rule/split support measured after generation."
+    }
+  },
+  "sources": [
+    {
+      "id": "ibm_hi_small",
+      "train_before": "2022-09-06T13:37:00",
+      "test_from": "2022-09-08T16:13:00"
+    },
+    {
+      "id": "ibm_li_small",
+      "train_before": "2022-09-06T13:33:00",
+      "test_from": "2022-09-08T16:07:00"
+    },
+    {
+      "id": "saml_d",
+      "train_before": "2023-04-16T21:10:39",
+      "test_from": "2023-06-19T22:08:58"
+    }
+  ]
+}

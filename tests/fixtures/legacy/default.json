@@ -1,0 +1,21 @@
+{
+  "version": "aml-preparation-v1",
+  "assembly_index": "assembly.local.json",
+  "output_root": "../runs",
+  "partitions": 32,
+  "batch_rows": 25000,
+  "train_fraction": 0.6,
+  "validation_fraction": 0.2,
+  "primary_windows": [
+    "24h"
+  ],
+  "auxiliary_windows": [
+    "1h",
+    "7d"
+  ],
+  "exclude_self_transfers": true,
+  "standardize": false,
+  "max_categories": 128,
+  "prediction_unit": "TRANSACTION_AUXILIARY",
+  "main_alert_training_status": "LEGACY_TRANSACTION_AUXILIARY_TEST_FIXTURE"
+}

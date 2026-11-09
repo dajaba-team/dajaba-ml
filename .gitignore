@@ -1,0 +1,23 @@
+
+# ML public boundary. Does not change parent repository tracking.
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+/runs/
+/build/
+/docs/
+.env
+.env.*
+*.local.json
+*.local.toml
+*.duckdb
+*.log
+
+# Publish examples, not machine-specific execution configs.
+/configs/*
+!/configs/*.example.json
+!/configs/README.md
+/scripts/Remove-OldPreprocessingAfterSuccess.ps1

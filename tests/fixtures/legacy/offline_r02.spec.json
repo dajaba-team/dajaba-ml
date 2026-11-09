@@ -1,0 +1,13 @@
+{
+  "rule_version": "mldb-offline-r02-v1",
+  "rule_version_origin": "OFFLINE_SPEC",
+  "policy_version": "mldb-r02-policy-v1",
+  "min_counterparties": 10,
+  "window_policy": "B7_E_PLUS_ONE_MINUTE",
+  "recurrence_policy": "PREVIOUS_CLOCK_MINUTE_FALSE_TO_TRUE",
+  "evidence_policy": "ALL_INCOMING_IN_WINDOW",
+  "counterparty_policy": "EXACT_ACCOUNT_KEYS_ACROSS_CURRENCIES",
+  "self_transfer_policy": "EXCLUDE_FLAGGED_AND_SAME_ACCOUNT",
+  "decision_status": "CONFIRMED",
+  "confirmation_reference": "ARCHIVED_N10_OFFLINE_POLICY_REGRESSION_FIXTURE_NOT_CURRENT_SERVICE_CONFIG"
+}

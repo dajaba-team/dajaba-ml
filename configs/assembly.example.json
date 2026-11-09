@@ -1,0 +1,13 @@
+{
+  "version": "ml-assembly-input-v1",
+  "ml_runs": {
+    "ibm_hi_small": "REPLACE_WITH_VERIFIED_ASSEMBLY_RUN",
+    "ibm_li_small": "REPLACE_WITH_VERIFIED_ASSEMBLY_RUN",
+    "saml_d": "REPLACE_WITH_VERIFIED_ASSEMBLY_RUN"
+  },
+  "run_manifest_sha256": {
+    "ibm_hi_small": "REPLACE_WITH_ACTUAL_RUN_JSON_SHA256",
+    "ibm_li_small": "REPLACE_WITH_ACTUAL_RUN_JSON_SHA256",
+    "saml_d": "REPLACE_WITH_ACTUAL_RUN_JSON_SHA256"
+  }
+}

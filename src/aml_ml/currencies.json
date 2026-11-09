@@ -1,0 +1,37 @@
+{
+  "version": "confirmed-aliases-20261101-v2",
+  "confirmed": {
+    "US Dollar": "USD",
+    "US dollar": "USD",
+    "UK Pound": "GBP",
+    "UK pounds": "GBP",
+    "Euro": "EUR",
+    "Yen": "JPY",
+    "Swiss Franc": "CHF",
+    "Swiss franc": "CHF",
+    "Canadian Dollar": "CAD",
+    "Mexican Peso": "MXN",
+    "Australian Dollar": "AUD",
+    "Brazil Real": "BRL",
+    "Saudi Riyal": "SAR",
+    "Moroccan dirham": "MAD",
+    "Albanian lek": "ALL",
+    "Turkish lira": "TRY",
+    "Indian rupee": "INR",
+    "Pakistani rupee": "PKR",
+    "Naira": "NGN",
+    "Bitcoin": "CRYPTO:BTC",
+    "Yuan": "CNY",
+    "Shekel": "ILS",
+    "Ruble": "RUB",
+    "Rupee": "INR"
+  },
+  "unverified": [
+    "Dirham"
+  ],
+  "unknown_policy": "Preserve original value. Never infer a currency from a country.",
+  "service_code_overrides": {
+    "CRYPTO:BTC": "BTC"
+  },
+  "service_code_reference": "AML·STR interface contract section 1.6, 2026-10-30; internal crypto bucket preserved"
+}
