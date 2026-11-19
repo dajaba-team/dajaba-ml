@@ -1,0 +1,395 @@
+[
+  {
+    "alert": {
+      "alert_id": "synthetic-1",
+      "rule_id": "R01_FAN_OUT",
+      "account_key": "100_TEST_ACCOUNT",
+      "reference_ts": "2030-01-10 12:00:00",
+      "window_start": "2030-01-06 12:00:00",
+      "window_end": "2030-01-10 12:00:00",
+      "transaction_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "rule_facts": {}
+    },
+    "transactions": [
+      {
+        "transaction_id": 1,
+        "ts": "2030-01-10 11:50:00",
+        "from_account_key": "100_TEST_ACCOUNT",
+        "to_account_key": "300_TEST_0",
+        "amount_paid": "20",
+        "currency_paid": "US Dollar",
+        "amount_received": "20",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 2,
+        "ts": "2030-01-10 11:51:00",
+        "from_account_key": "100_TEST_ACCOUNT",
+        "to_account_key": "300_TEST_1",
+        "amount_paid": "21",
+        "currency_paid": "US Dollar",
+        "amount_received": "21",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 3,
+        "ts": "2030-01-10 11:52:00",
+        "from_account_key": "100_TEST_ACCOUNT",
+        "to_account_key": "300_TEST_2",
+        "amount_paid": "22",
+        "currency_paid": "US Dollar",
+        "amount_received": "22",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 4,
+        "ts": "2030-01-10 11:53:00",
+        "from_account_key": "100_TEST_ACCOUNT",
+        "to_account_key": "300_TEST_3",
+        "amount_paid": "23",
+        "currency_paid": "US Dollar",
+        "amount_received": "23",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 5,
+        "ts": "2030-01-10 11:54:00",
+        "from_account_key": "100_TEST_ACCOUNT",
+        "to_account_key": "300_TEST_4",
+        "amount_paid": "24",
+        "currency_paid": "US Dollar",
+        "amount_received": "24",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 6,
+        "ts": "2030-01-10 11:55:00",
+        "from_account_key": "100_TEST_ACCOUNT",
+        "to_account_key": "300_TEST_5",
+        "amount_paid": "25",
+        "currency_paid": "US Dollar",
+        "amount_received": "25",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 7,
+        "ts": "2030-01-10 11:56:00",
+        "from_account_key": "100_TEST_ACCOUNT",
+        "to_account_key": "300_TEST_6",
+        "amount_paid": "26",
+        "currency_paid": "US Dollar",
+        "amount_received": "26",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 8,
+        "ts": "2030-01-10 11:57:00",
+        "from_account_key": "100_TEST_ACCOUNT",
+        "to_account_key": "300_TEST_7",
+        "amount_paid": "27",
+        "currency_paid": "US Dollar",
+        "amount_received": "27",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 9,
+        "ts": "2030-01-10 11:58:00",
+        "from_account_key": "100_TEST_ACCOUNT",
+        "to_account_key": "300_TEST_8",
+        "amount_paid": "28",
+        "currency_paid": "US Dollar",
+        "amount_received": "28",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 10,
+        "ts": "2030-01-10 11:59:00",
+        "from_account_key": "100_TEST_ACCOUNT",
+        "to_account_key": "300_TEST_9",
+        "amount_paid": "29",
+        "currency_paid": "US Dollar",
+        "amount_received": "29",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      }
+    ],
+    "expected_features": {
+      "evidence_count": 10.0,
+      "evidence_span_seconds": 540.0,
+      "evidence_min_gap_seconds": 60.0,
+      "evidence_max_gap_seconds": 60.0,
+      "focal_in_count": 0.0,
+      "focal_out_count": 10.0,
+      "focal_distinct_senders": 0.0,
+      "focal_distinct_receivers": 10.0,
+      "evidence_account_count": 11.0,
+      "paid_raw_currency_count": 1.0,
+      "received_raw_currency_count": 1.0,
+      "payment_format_count": 1.0,
+      "rule_r01": 1.0,
+      "rule_r02": 0.0,
+      "rule_r03": 0.0,
+      "rule_r04": 0.0,
+      "rule_r05": 0.0,
+      "rule_r06": 0.0,
+      "evidence_ach_fraction": 0.0,
+      "evidence_cheque_fraction": 0.0,
+      "evidence_cash_fraction": 0.0,
+      "evidence_paid_max_share": 0.0,
+      "evidence_received_max_share": 0.0,
+      "evidence_span_fraction_96h": 0.0,
+      "evidence_last_hour_fraction": 0.0,
+      "evidence_min_path_hops_scaled": 0.0,
+      "evidence_features_applicable": 0.0,
+      "evidence_payment_known_fraction": 0.0,
+      "evidence_paid_ratio_coverage": 0.0,
+      "evidence_received_ratio_coverage": 0.0,
+      "evidence_path_available": 0.0
+    },
+    "expected_score": 0.017110977321863174,
+    "expected_reasons": [
+      "evidence_ach_fraction",
+      "evidence_min_gap_seconds",
+      "payment_format_count"
+    ]
+  },
+  {
+    "alert": {
+      "alert_id": "synthetic-2",
+      "rule_id": "R02_FAN_IN",
+      "account_key": "100_TEST_ACCOUNT",
+      "reference_ts": "2030-01-10 12:00:00",
+      "window_start": "2030-01-06 12:00:00",
+      "window_end": "2030-01-10 12:00:00",
+      "transaction_ids": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "rule_facts": {}
+    },
+    "transactions": [
+      {
+        "transaction_id": 1,
+        "ts": "2030-01-10 11:55:00",
+        "from_account_key": "300_TEST_0",
+        "to_account_key": "100_TEST_ACCOUNT",
+        "amount_paid": "20",
+        "currency_paid": "US Dollar",
+        "amount_received": "20",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 2,
+        "ts": "2030-01-10 11:56:00",
+        "from_account_key": "300_TEST_1",
+        "to_account_key": "100_TEST_ACCOUNT",
+        "amount_paid": "21",
+        "currency_paid": "US Dollar",
+        "amount_received": "21",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 3,
+        "ts": "2030-01-10 11:57:00",
+        "from_account_key": "300_TEST_2",
+        "to_account_key": "100_TEST_ACCOUNT",
+        "amount_paid": "22",
+        "currency_paid": "US Dollar",
+        "amount_received": "22",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 4,
+        "ts": "2030-01-10 11:58:00",
+        "from_account_key": "300_TEST_3",
+        "to_account_key": "100_TEST_ACCOUNT",
+        "amount_paid": "23",
+        "currency_paid": "US Dollar",
+        "amount_received": "23",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 5,
+        "ts": "2030-01-10 11:59:00",
+        "from_account_key": "300_TEST_4",
+        "to_account_key": "100_TEST_ACCOUNT",
+        "amount_paid": "24",
+        "currency_paid": "US Dollar",
+        "amount_received": "24",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      }
+    ],
+    "expected_features": {
+      "evidence_count": 5.0,
+      "evidence_span_seconds": 240.0,
+      "evidence_min_gap_seconds": 60.0,
+      "evidence_max_gap_seconds": 60.0,
+      "focal_in_count": 5.0,
+      "focal_out_count": 0.0,
+      "focal_distinct_senders": 5.0,
+      "focal_distinct_receivers": 0.0,
+      "evidence_account_count": 6.0,
+      "paid_raw_currency_count": 1.0,
+      "received_raw_currency_count": 1.0,
+      "payment_format_count": 1.0,
+      "rule_r01": 0.0,
+      "rule_r02": 1.0,
+      "rule_r03": 0.0,
+      "rule_r04": 0.0,
+      "rule_r05": 0.0,
+      "rule_r06": 0.0,
+      "evidence_ach_fraction": 0.0,
+      "evidence_cheque_fraction": 0.0,
+      "evidence_cash_fraction": 0.0,
+      "evidence_paid_max_share": 0.21818181818181817,
+      "evidence_received_max_share": 0.21818181818181817,
+      "evidence_span_fraction_96h": 0.0006944444444444445,
+      "evidence_last_hour_fraction": 1.0,
+      "evidence_min_path_hops_scaled": 0.0,
+      "evidence_features_applicable": 1.0,
+      "evidence_payment_known_fraction": 1.0,
+      "evidence_paid_ratio_coverage": 1.0,
+      "evidence_received_ratio_coverage": 1.0,
+      "evidence_path_available": 0.0
+    },
+    "expected_score": 0.006362054497003555,
+    "expected_reasons": [
+      "evidence_ach_fraction",
+      "evidence_span_seconds",
+      "payment_format_count"
+    ]
+  },
+  {
+    "alert": {
+      "alert_id": "synthetic-3",
+      "rule_id": "R04_CYCLE",
+      "account_key": "100_TEST_ACCOUNT",
+      "reference_ts": "2030-01-10 12:00:00",
+      "window_start": "2030-01-06 12:00:00",
+      "window_end": "2030-01-10 12:00:00",
+      "transaction_ids": [
+        1,
+        2
+      ],
+      "rule_facts": {
+        "paths": [
+          [
+            1,
+            2
+          ]
+        ],
+        "hops_by_path": [
+          2
+        ]
+      }
+    },
+    "transactions": [
+      {
+        "transaction_id": 1,
+        "ts": "2030-01-10 11:58:00",
+        "from_account_key": "100_TEST_ACCOUNT",
+        "to_account_key": "200_TEST_ACCOUNT",
+        "amount_paid": "20",
+        "currency_paid": "US Dollar",
+        "amount_received": "20",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      },
+      {
+        "transaction_id": 2,
+        "ts": "2030-01-10 11:59:00",
+        "from_account_key": "200_TEST_ACCOUNT",
+        "to_account_key": "100_TEST_ACCOUNT",
+        "amount_paid": "21",
+        "currency_paid": "US Dollar",
+        "amount_received": "21",
+        "currency_received": "US Dollar",
+        "payment_format": "Wire",
+        "is_self_transfer": false
+      }
+    ],
+    "expected_features": {
+      "evidence_count": 2.0,
+      "evidence_span_seconds": 60.0,
+      "evidence_min_gap_seconds": 60.0,
+      "evidence_max_gap_seconds": 60.0,
+      "focal_in_count": 1.0,
+      "focal_out_count": 1.0,
+      "focal_distinct_senders": 1.0,
+      "focal_distinct_receivers": 1.0,
+      "evidence_account_count": 2.0,
+      "paid_raw_currency_count": 1.0,
+      "received_raw_currency_count": 1.0,
+      "payment_format_count": 1.0,
+      "rule_r01": 0.0,
+      "rule_r02": 0.0,
+      "rule_r03": 0.0,
+      "rule_r04": 1.0,
+      "rule_r05": 0.0,
+      "rule_r06": 0.0,
+      "evidence_ach_fraction": 0.0,
+      "evidence_cheque_fraction": 0.0,
+      "evidence_cash_fraction": 0.0,
+      "evidence_paid_max_share": 0.5121951219512195,
+      "evidence_received_max_share": 0.5121951219512195,
+      "evidence_span_fraction_96h": 0.00017361111111111112,
+      "evidence_last_hour_fraction": 1.0,
+      "evidence_min_path_hops_scaled": 0.5,
+      "evidence_features_applicable": 1.0,
+      "evidence_payment_known_fraction": 1.0,
+      "evidence_paid_ratio_coverage": 1.0,
+      "evidence_received_ratio_coverage": 1.0,
+      "evidence_path_available": 1.0
+    },
+    "expected_score": 0.008759072981774807,
+    "expected_reasons": [
+      "evidence_span_seconds",
+      "evidence_account_count",
+      "evidence_ach_fraction"
+    ]
+  }
+]
