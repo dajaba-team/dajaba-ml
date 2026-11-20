@@ -103,7 +103,7 @@ def test_rule_gate_and_key_identity():
     fs = json.loads((Path(__file__).parent / "parity_fixture.json").read_text(encoding="utf8"))
     a, tx, c = build(fs[1])
     assert (
-        score([replace(a, rule_id="R05_SCATTER_GATHER")], tx, coverage=[c])[0].failure_code
+        score([replace(a, rule_id="R99_UNKNOWN")], tx, coverage=[c])[0].failure_code
         == "RULE_NOT_SUPPORTED"
     )
     changed = replace(a, account_key="010_" + a.account_key.split("_", 1)[-1])
@@ -138,7 +138,7 @@ def test_future_evidence_is_preserved_but_excluded():
 
 
 @pytest.mark.parametrize("rule", ["R03_FX_RELAY", "R05_SCATTER_GATHER", "R06_GATHER_SCATTER"])
-def test_unverified_rules_are_blocked(rule):
+def test_known_rules_reject_incompatible_input(rule):
     from dataclasses import replace
 
     fs = json.loads((Path(__file__).parent / "parity_fixture.json").read_text(encoding="utf8"))
@@ -146,7 +146,7 @@ def test_unverified_rules_are_blocked(rule):
     result = score([replace(alert, rule_id=rule)], transactions, coverage=[coverage])[0]
     assert result.score is None
     assert result.data_quality_status == "FAILED"
-    assert result.failure_code == "RULE_NOT_SUPPORTED"
+    assert result.failure_code == "REQUIRED_INPUT_MISSING"
 
 
 def test_mixed_batch_preserves_r04_results_and_r05_superset():
@@ -160,7 +160,7 @@ def test_mixed_batch_preserves_r04_results_and_r05_superset():
     unsupported = replace(
         first,
         alert_id="r05",
-        rule_id="R05_SCATTER_GATHER",
+        rule_id="R99_UNKNOWN",
         rule_facts={"paths": paths[:1]},
         transaction_ids=first.transaction_ids + (999991, 999992),
     )

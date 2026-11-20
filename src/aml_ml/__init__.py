@@ -16,7 +16,7 @@ from .serving_candidate import (
 )
 from .serving_candidate import features as _candidate_features
 
-__version__ = "0.1.0rc1"
+__version__ = "0.1.0rc2"
 
 
 def features(alerts, transactions, *, coverage=None, **legacy_options):

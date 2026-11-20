@@ -104,6 +104,69 @@ class UnsupportedRuleError(ValueError):
     pass
 
 
+def _check_new_rules(alert, rows):
+    facts = alert.rule_facts
+    indexed = {int(row['transaction_id']): row for row in rows}
+    if len(indexed) != len(alert.transaction_ids) or not isinstance(facts, dict):
+        raise InputError('complete pre-reference rule evidence required')
+
+    if alert.rule_id == 'R06_GATHER_SCATTER':
+        incoming = {r['from_account_key'] for r in rows if r['to_account_key'] == alert.account_key}
+        outgoing = {r['to_account_key'] for r in rows if r['from_account_key'] == alert.account_key}
+        if (any(alert.account_key not in (r['from_account_key'], r['to_account_key']) for r in rows)
+                or facts.get('distinct_senders') != len(incoming)
+                or facts.get('distinct_receivers') != len(outgoing)
+                or not (5 <= len(incoming) <= 100 and 5 <= len(outgoing) <= 100)):
+            raise InputError('R06 counterparty facts do not match evidence')
+        return
+
+    paths = facts.get('paths')
+    if not isinstance(paths, list) or not paths:
+        raise InputError('R03/R05 paths are required')
+    pairs = []
+    for path in paths:
+        if (not isinstance(path, list) or len(path) != 2
+                or any(type(i) is not int or i not in indexed for i in path)):
+            raise InputError('R03/R05 invalid path IDs')
+        a, b = (indexed[i] for i in path)
+        if (a['to_account_key'] != b['from_account_key'] or _time(a['ts']) >= _time(b['ts'])):
+            raise InputError('R03/R05 disconnected or unordered path')
+        pairs.append((a, b))
+    if len({tuple(path) for path in paths}) != len(paths):
+        raise InputError('R03/R05 duplicate paths')
+
+    if alert.rule_id == 'R03_FX_RELAY':
+        if ({i for path in paths for i in path} != indexed.keys()
+                or any(a['to_account_key'] != alert.account_key or a['currency_received'] == b['currency_paid']
+                       for a, b in pairs)):
+            raise InputError('R03 relay evidence does not match paths')
+        return
+
+    source = facts.get('source_account_key')
+    target = alert.account_key
+    if not isinstance(source, str) or not source or source == target:
+        raise InputError('R05 invalid source')
+    mids = {a['to_account_key'] for a, _ in pairs}
+    if (len(mids) != len(paths) or len(mids) < 3 or facts.get('intermediates') != len(mids)
+            or source in mids or target in mids):
+        raise InputError('R05 invalid intermediates')
+    representatives, participating = [], set()
+    for mid in mids:
+        first = sorted((_time(r['ts']), i) for i, r in indexed.items()
+                       if r['from_account_key'] == source and r['to_account_key'] == mid)
+        second = sorted((_time(r['ts']), i) for i, r in indexed.items()
+                        if r['from_account_key'] == mid and r['to_account_key'] == target)
+        if not first or not second or first[0][0] >= second[-1][0]:
+            raise InputError('R05 incomplete legs')
+        next_leg = next(leg for leg in second if leg[0] > first[0][0])
+        representatives.append((first[0], next_leg[1]))
+        participating.update(i for t, i in first if t < second[-1][0])
+        participating.update(i for t, i in second if first[0][0] < t)
+    expected = [[first[1], second] for first, second in sorted(representatives)]
+    if paths != expected or participating != indexed.keys():
+        raise InputError('R05 representative paths or full chosen-source evidence differ')
+
+
 def _time(v):
     try:
         t = pd.Timestamp(v)
@@ -158,9 +221,7 @@ def _calculate(a, coverage, index):
     ):
         raise InputError("alert identity")
     if a.rule_id not in RULES:
-        raise InputError("unknown rule")
-    if a.rule_id in ("R03_FX_RELAY", "R05_SCATTER_GATHER", "R06_GATHER_SCATTER"):
-        raise UnsupportedRuleError("rule-specific service evidence parity unresolved")
+        raise UnsupportedRuleError("unknown rule")
     if not isinstance(coverage, Coverage) or coverage.status not in (
         "COMPLETE",
         "PARTIAL",
@@ -219,6 +280,8 @@ def _calculate(a, coverage, index):
         rows.append(r)
     if len(rows) < 2:
         raise InputError("insufficient pre-reference evidence")
+    if a.rule_id in ("R03_FX_RELAY", "R05_SCATTER_GATHER", "R06_GATHER_SCATTER"):
+        _check_new_rules(a, rows)
     ids = [int(r["transaction_id"]) for r in rows]
     stamps = sorted(_time(r["ts"]) for r in rows)
     if a.rule_id in ("R01_FAN_OUT", "R02_FAN_IN"):
@@ -360,7 +423,9 @@ def score(
                 )
             except Exception:
                 code = "COMPUTE_ERROR"
-        ok = value is not None
+        ok = value is not None and math.isfinite(value) and 0 <= value <= 1
+        if value is not None and not ok:
+            value, code = None, 'COMPUTE_ERROR'
         reasons = []
         if ok:
             try:
