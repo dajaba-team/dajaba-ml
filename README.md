@@ -2,7 +2,7 @@
 
 **경보의 과거 거래를 피처로 만들고, 조사 우선순위 모델을 학습·평가하는 프로젝트입니다.**
 
-> 2026-11-09 KST 갱신. 실제 ml_preparation 폴더의 구현을 설명합니다. 코드 존재, 전처리 실행, 학습 완료, 서비스 연동 완료를 구분합니다. GitHub 업로드 원본은 이 폴더이며 준비본을 사용하지 않습니다.
+오프라인 전처리와 채점 후보 패키지를 관리합니다. 아래 초기 오프라인 룰 범위는 서빙 패키지의 지원 룰과 버전이 다릅니다.
 
 ## 범위와 현재 상태
 
@@ -71,7 +71,7 @@ SAML의 단일 Amount를 지급액과 수취액 양쪽으로 복제하지 않습
 | ml_preparation/tests | 합성 데이터와 회귀 검사 |
 | ml_preparation/configs | 룰·입력·실행 설정 |
 
-위 축약 파일명은 모두 ml_preparation/src/aml_ml 아래입니다. 진단 모듈의 실제 파일명은 offline_multi_diagnostics.py입니다.
+패키지 소스는 이 저장소의 `src/aml_ml`에 있습니다. 표의 ml_preparation은 기존 로컬 프로젝트에서 사용한 경로명입니다.
 
 ## 데이터 계약
 
@@ -85,14 +85,18 @@ SAML의 단일 Amount를 지급액과 수취액 양쪽으로 복제하지 않습
 
 ## 환경과 사용
 
-Python 3.12, DuckDB·PyArrow·Polars·Pandas·NumPy를 사용합니다. XGBoost는 training 선택 의존성입니다. 설치 기준은 ml_preparation/pyproject.toml입니다.
+Python 3.12, DuckDB·PyArrow·Polars·Pandas·NumPy·XGBoost를 사용합니다. 설치 기준은 루트 `pyproject.toml`입니다. [채점 후보 설치와 검증](docs/rc3-serving.md)을 참고합니다.
 
 현재 입력 인덱스와 일부 테스트는 기존 MLDB 작업 공간에 의존합니다. 저장소 분리 후 독립 설치·작은 회귀 검증을 통과하기 전에는 clone 직후 실행 가능하다고 보지 않습니다. 전체 전처리 런처는 검사가 끝나면 데이터 생성까지 진행하므로 테스트만 할 때 사용하지 않습니다.
 
 ## CI/CD 구조
 
+![다자바 ML의 오프라인 학습과 AI 채점 패키지 인계](docs/images/ml-architecture-ci.png)
+
+원격 공식 태그는 `v0.1.0rc2`다. 이 브랜치의 사건형 R04 후보 소스 버전은 `0.1.0rc3`이며, 가중치는 승인된 내부 파일에서 읽는다. [후보 설치·채점 재현](docs/rc3-serving.md)에서 명령과 피처 계약을 확인할 수 있다. 그림의 AI 통합 검사는 AI 저장소의 PR 검증이다. ML 저장소 자체의 Actions 연동과 서버 적용은 별도 단계다.
+
 <!-- cicd-pipeline-image: ml-cicd-pipeline -->
-![ML CI/CD: 코드 검사 제안과 후속 학습·평가·배포 파이프라인](docs/images/ml-cicd-pipeline.png)
+[이전 CI/CD 그림](docs/images/ml-cicd-pipeline.png)
 
 [확대 가능한 SVG 원본](docs/images/ml-cicd-pipeline.svg)
 
@@ -120,7 +124,7 @@ flowchart LR
 
 ## 현재 검증 진입점
 
-상위 프로젝트 루트의 tools/Test-Release.ps1은 기존 .venv와 실제 DBcheck·AssembleDB·ml_preparation/src를 명시적으로 사용합니다. 사용자 실행용이며 이번 문서 갱신에서 검사를 실행하지 않았습니다. 운영 설정·완료된 run의 provenance는 수정하지 않았습니다.
+채점 후보의 공개 회귀는 `python -m pytest tests/test_rc3_serving_contract.py -q`로 실행합니다. 기존 MLDB 통합 검사는 두 데이터 패키지를 함께 설치한 뒤 아래에 적힌 방법으로 실행합니다.
 
 현재 src/aml_ml은 MLDB 패키지를 import하지 않지만 tests/test_prepare.py는 DBcheck·AssembleDB로 합성 통합 입력을 생성합니다. 실제 폴더의 전체 회귀는 세 패키지를 함께 연결해 검사합니다. 별도 ML 저장소에서는 자체 검사와 이 통합 검사를 구별하고, MLDB 버전을 명시해야 합니다.
 
