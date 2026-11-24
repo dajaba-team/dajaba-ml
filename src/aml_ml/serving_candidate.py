@@ -109,6 +109,10 @@ class UnsupportedRuleError(ValueError):
     pass
 
 
+class CheckpointUnavailableError(RuntimeError):
+    pass
+
+
 def _check_new_rules(alert, rows):
     facts = alert.rule_facts
     indexed = {int(row['transaction_id']): row for row in rows}
@@ -183,29 +187,32 @@ def _time(v):
 
 
 def load_candidate():
-    """Load the exact candidate from the configured local model path."""
+    """Verify the configured checkpoint before using the cached candidate."""
     model_path = os.environ.get("AML_ML_MODEL_PATH")
     if not model_path:
-        raise RuntimeError("MODEL_UNAVAILABLE: set AML_ML_MODEL_PATH to the approved checkpoint")
-    return _load_candidate(Path(model_path).resolve())
-
-
-@lru_cache(maxsize=1)
-def _load_candidate(model_path: Path):
+        raise CheckpointUnavailableError("MODEL_UNAVAILABLE: set AML_ML_MODEL_PATH to the approved checkpoint")
     pkg = files("aml_ml")
     contract = json.loads(pkg.joinpath("serving_contract.json").read_text(encoding="utf-8"))
     if tuple(contract["features"]) != FEATURE_NAMES or contract["dtype"] != "float32":
-        raise RuntimeError("MODEL_UNAVAILABLE: contract feature order or dtype mismatch")
+        raise CheckpointUnavailableError("MODEL_UNAVAILABLE: contract feature order or dtype mismatch")
     try:
-        model_bytes = model_path.read_bytes()
+        model_bytes = Path(model_path).read_bytes()
     except OSError as exc:
-        raise RuntimeError("MODEL_UNAVAILABLE: cannot read checkpoint") from exc
+        raise CheckpointUnavailableError("MODEL_UNAVAILABLE: cannot read checkpoint") from exc
     if hashlib.sha256(model_bytes).hexdigest() != contract["model_sha256"]:
-        raise RuntimeError("MODEL_UNAVAILABLE: checkpoint SHA-256 mismatch")
+        raise CheckpointUnavailableError("MODEL_UNAVAILABLE: checkpoint SHA-256 mismatch")
+    return _load_candidate(model_bytes)
+
+
+@lru_cache(maxsize=1)
+def _load_candidate(model_bytes: bytes):
     m = xgb.Booster(params={"nthread": 1, "device": "cpu"})
-    m.load_model(bytearray(model_bytes))
-    if tuple(m.feature_names) != FEATURE_NAMES:
-        raise RuntimeError("MODEL_UNAVAILABLE: feature order mismatch")
+    try:
+        m.load_model(bytearray(model_bytes))
+    except xgb.core.XGBoostError as exc:
+        raise CheckpointUnavailableError("MODEL_UNAVAILABLE: cannot load checkpoint") from exc
+    if tuple(m.feature_names or ()) != FEATURE_NAMES:
+        raise CheckpointUnavailableError("MODEL_UNAVAILABLE: feature order mismatch")
     return m
 
 
