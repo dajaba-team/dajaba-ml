@@ -4,6 +4,12 @@
 
 HI-Medium의 C2 proxy 레이블로 학습한 사건형 R04 모델의 채점 코드를 `aml-ml` 패키지로 제공합니다. `v0.1.0rc3`의 채점 룰은 R01~R06입니다. 아래 2026-11-08 전처리 기록은 당시 오프라인 룰을 기준으로 합니다.
 
+## 시스템 아키텍처
+
+![MLDB 조립 데이터로 XGBoost를 학습하고 AI 서버가 rc3 패키지로 경보를 채점하는 흐름](docs/images/ml-architecture-ci.png)
+
+AI 서버의 `POST /v1/scores`는 실제 채점 모드에서 `v0.1.0rc3`의 `aml_ml.score()`를 호출합니다. 패키지는 96시간 경보 창의 근거와 직전 24시간 이력의 완전성을 확인한 뒤, 학습 때와 같은 순서의 `float32` 피처 31개로 경보당 0~1 점수를 계산합니다. 위험 등급 판정과 케이스 생성은 백엔드 정책이 담당합니다. 가중치는 승인된 내부 체크포인트에서 읽습니다. [공식 태그](https://github.com/dajaba-team/dajaba-ml/tree/v0.1.0rc3) · [설치·채점 재현](docs/rc3-serving.md)
+
 ## 초기 오프라인 전처리 범위 (2026-11-08)
 
 ml_preparation 패키지를 한 단위로 관리합니다. 같은 패키지 안에서 전처리와 학습이 공유하는 기능을 폴더 이름만으로 나누지 않습니다.
@@ -13,30 +19,6 @@ ml_preparation 패키지를 한 단위로 관리합니다. 같은 패키지 안�
 - 2026-11-08 실행의 산출물 생성과 포맷 검증은 완료 보고됨. 모델 학습·성능 평가·서비스 ID 교차검증 완료를 뜻하지 않습니다.
 - 기존 학습 코드를 다중 룰 산출물에 연결하는 어댑터와 평가 수용 기준은 별도 검증 대상입니다.
 - 최신 리팩터링은 정적 검토와 사용자 실행 회귀 검증을 구분해서 인수합니다.
-
-## 초기 오프라인 파이프라인
-
-```mermaid
-flowchart TD
-  IN[MLDB의 출처별 조립 데이터] --> RULE[룰별 경보 / 전체 근거 생성]
-  RULE --> META[경보 메타데이터 / proxy 레이블]
-  RULE --> FEATURE[reference_ts 이전 거래 피처]
-  META --> SPLIT[시간순 분할 / 근거 중복 방지]
-  FEATURE --> SPLIT
-  SPLIT --> PRE[train 전용 전처리 적합]
-  PRE --> OUT[X · y / manifest / quality]
-  OUT -. 후속 연결 및 실행 .-> TRAIN[학습]
-  TRAIN --> VAL[validation 모델 · 임계값 선택]
-  VAL --> TEST[선택 후 격리된 test 평가]
-  TEST --> BUNDLE[버전 고정 모델 패키지]
-  BUNDLE --> API[AI 서버 연결 검증]
-  classDef ready fill:#dcfce7,stroke:#16a34a,color:#0f172a
-  classDef next fill:#fef3c7,stroke:#d97706,color:#0f172a
-  class RULE,META,FEATURE,SPLIT,PRE,OUT ready
-  class TRAIN,VAL,TEST,BUNDLE,API next
-```
-
-녹색은 2026-11-08 실행에서 검증한 전처리 경로, 노란색은 당시 후속 검증·실행 단계입니다. 데이터 생성 완료와 모델 성능 입증은 다릅니다.
 
 ## 초기 오프라인 적용 룰
 
@@ -89,36 +71,9 @@ Python 3.12, DuckDB·PyArrow·Polars·Pandas·NumPy·XGBoost를 사용합니다.
 
 오프라인 입력 인덱스와 일부 통합 테스트는 MLDB 작업 공간에 의존합니다. rc3 채점 계약의 합성 회귀 검사는 이 저장소에서 실행할 수 있습니다. 전체 전처리 런처는 검사가 끝나면 데이터 생성까지 진행하므로 테스트만 할 때 사용하지 않습니다.
 
-## 시스템 아키텍처
+## CI/CD 제안
 
-![MLDB 조립 데이터로 XGBoost를 학습하고 AI 서버가 rc3 패키지로 경보를 채점하는 흐름](docs/images/ml-architecture-ci.png)
-
-AI 서버의 `POST /v1/scores`는 실제 채점 모드에서 `v0.1.0rc3`의 `aml_ml.score()`를 호출합니다. 패키지는 96시간 경보 창의 근거와 직전 24시간 이력의 완전성을 확인한 뒤, 학습 때와 같은 순서의 `float32` 피처 31개로 경보당 0~1 점수를 계산합니다. 위험 등급 판정과 케이스 생성은 백엔드 정책이 담당합니다. 가중치는 승인된 내부 체크포인트에서 읽습니다. [공식 태그](https://github.com/dajaba-team/dajaba-ml/tree/v0.1.0rc3) · [설치·채점 재현](docs/rc3-serving.md)
-
-### CI/CD 제안
-
-<!-- cicd-pipeline-image: ml-cicd-pipeline -->
-[이전 CI/CD 그림](docs/images/ml-cicd-pipeline.png)
-
-[이전 CI/CD 그림의 SVG 원본](docs/images/ml-cicd-pipeline.svg)
-
-이전 CI/CD 그림의 파란 실선은 현재 로컬에서 확인한 정의·구현, 초록 점선은 CI/CD 제안, 주황 점선은 사용자 실행·별도 승인 또는 후속 검증 단계입니다. 워크플로 정의와 실제 실행 성공은 구분하며, 미확정 배포 기술은 로고로 단정하지 않습니다. 아래 Mermaid와 기존 설명은 편집 가능한 요약으로 보존합니다.
-<!-- /cicd-pipeline-image -->
-
-```mermaid
-flowchart LR
-  PR[PR] --> CHECK[제안: Ruff / 합성 데이터 회귀]
-  CHECK --> REVIEW[코드 검토]
-  REVIEW --> CODE[승인된 코드 버전]
-  CODE -. 사용자 실행 .-> PRE[전처리 검증]
-  PRE --> TRAIN[학습 · validation 선택]
-  TRAIN --> TEST[격리 test 평가]
-  TEST --> ACCEPT[성능 · 계약 인수]
-  ACCEPT --> PACK[모델 · 피처 · 전처리 버전 고정]
-  PACK -. 별도 승인 .-> DEPLOY[AI 서버 배포 및 연동 검사]
-```
-
-이 CI/CD는 목표 구조입니다. 원격 ML 저장소에 자동 학습·배포가 구성되었다는 의미가 아닙니다. PR에서 원천 전체 처리나 모델 학습, 운영 DB 접근을 자동 실행하지 않습니다.
+PR에서 정적 검사와 합성 데이터 회귀를 실행하는 것은 ML 저장소 CI의 제안 사항입니다. PR에서 원천 전체 처리나 모델 학습, 운영 DB 접근을 자동 실행하지 않습니다.
 
 ## 함께 보기
 
